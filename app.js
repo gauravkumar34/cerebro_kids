@@ -50,18 +50,22 @@ app.get("/home", function (req, res) {
 });
 
 app.post("/register", function (req, res) {
-  const newUser = new User({
-    email: req.body.username,
-    password: req.body.password,
-    confirmPassword: req.body.confirmPassword,
-  });
-  newUser.save(function (err) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render("Successful");
-    }
-  });
+  const { username, password, confirmPassword } = req.body;
+  if (!username) res.render("register", { error: "Please enter email" });
+  if (password === confirmPassword) {
+    const newUser = new User({
+      email: req.body.username,
+      password: req.body.password,
+      confirmPassword: req.body.confirmPassword,
+    });
+    newUser.save(function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render("Successful");
+      }
+    });
+  } else res.render("register", { error: "Please enter same password" });
 });
 
 app.post("/login", function (req, res) {
@@ -71,12 +75,13 @@ app.post("/login", function (req, res) {
   User.findOne({ email: username }, function (err, foundUser) {
     if (err) {
       console.log(err);
+      res.render("something went wrong");
     } else {
       if (foundUser) {
         if (foundUser.password === password) {
           res.render("Successful");
-        }
-      }
+        } else res.render("login", { error: "Invalid Email or Password" });
+      } else res.render("login", { error: "Invalid Email or Password" });
     }
   });
 });

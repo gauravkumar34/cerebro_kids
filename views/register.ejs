@@ -29,6 +29,9 @@
                 id="confirmPassword"
               />
             </div>
+            <% if (locals.error) { %>
+            <h6 style="color: red"><%= locals.error %></h6>
+            <% } %>
             <button
               type="submit"
               onsubmit="validatePassword"
